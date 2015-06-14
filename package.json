@@ -1,0 +1,24 @@
+{
+  "name": "edison-i2c-config",
+  "version": "0.1.0",
+  "description": "Configure I2C bus 6 on the Intel Edison Arduino baseboard",
+  "main": "edison-i2c-config.js",
+  "directories": {
+    "example": "examples"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/fivdi/edison-i2c-config.git"
+  },
+  "engines": {
+    "node": ">=0.10.0"
+  },
+  "keywords": [
+    "intel",
+    "edison",
+    "i2c"
+  ],
+  "author": "fivdi",
+  "license": "MIT"
+}
+
