@@ -1,5 +1,5 @@
-Unpublished
-===========
+0.1.1 / Jun 14 2015
+===================
 
   * fewer delays, fewer variables, generic code
 
