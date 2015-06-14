@@ -6,85 +6,73 @@ var GPIO_SYS_PATH = '/sys/class/gpio/',
   GPIO_DEBUG_PATH = '/sys/kernel/debug/gpio_debug/',
   GPIO_EXPORT_FILE = GPIO_SYS_PATH + 'export';
 
-var EXPORT = 'export',
-  DIRECTION = 'direction',
-  PINMUX = 'pinmux';
-
 var DELAY = 50;
 
-var exportGpio = function(gpio, cb) {
-  var gpioPath = GPIO_SYS_PATH + 'gpio' + gpio;
+var exportGpio = function(task, cb) {
+  var gpioPath = GPIO_SYS_PATH + 'gpio' + task.gpio;
 
   // if the directory for the gpio already exist, do nothing
   if (fs.existsSync(gpioPath)) {
     return setImmediate(cb);
   }
 
-  fs.writeFile(GPIO_EXPORT_FILE, gpio, cb);
+  fs.writeFile(GPIO_EXPORT_FILE, task.gpio, cb);
 };
 
-var gpioDirection = function(gpio, direction, cb) {
-  var gpioDirectionFile = GPIO_SYS_PATH + 'gpio' + gpio + '/direction';
+var direction = function(task, cb) {
+  var directionFile = GPIO_SYS_PATH + 'gpio' + task.gpio + '/direction';
 
-  fs.writeFile(gpioDirectionFile, direction, cb);
+  fs.writeFile(directionFile, task.direction, cb);
 };
 
-var gpioCurrentPinmux = function (gpio, pinmux, cb) {
-  var gpioCurrentPinmuxFile = GPIO_DEBUG_PATH + 'gpio' + gpio + '/current_pinmux';
+var currentPinmux = function (task, cb) {
+  var currentPinmuxFile = GPIO_DEBUG_PATH + 'gpio' + task.gpio + '/current_pinmux';
 
-  fs.writeFile(gpioCurrentPinmuxFile, pinmux, cb);
+  fs.writeFile(currentPinmuxFile, task.pinmux, cb);
 };
 
 var performTasks = function (tasks, cb) {
-  setTimeout(function () {
-    var task = tasks.shift();
+  var task = tasks.shift();
 
-    var nextTask = function (err) {
-      if (err) {
-        return cb(err);
-      }
+  if (!task) {
+    return setImmediate(cb);
+  }
+
+  task.func(task, function (err) {
+    if (err) {
+      return cb(err);
+    }
+    setTimeout(function () {
       performTasks(tasks, cb);
-    }
-
-    if (!task) {
-      return cb(null);
-    }
-
-    if (task.name === EXPORT) {
-      exportGpio(task.gpio, nextTask);
-    } else if (task.name === DIRECTION) {
-      gpioDirection(task.gpio, task.direction, nextTask);
-    } else if (task.name === PINMUX) {
-      gpioCurrentPinmux(task.gpio, task.pinmux, nextTask);
-    }
-  }, DELAY);
+    }, DELAY);
+  });
 };
 
 module.exports = function(cb) {
   var tasks = [
-    {name: EXPORT, gpio: 28},
-    {name: EXPORT, gpio: 27},
-    {name: EXPORT, gpio: 204},
-    {name: EXPORT, gpio: 205},
-    {name: EXPORT, gpio: 236},
-    {name: EXPORT, gpio: 237},
-    {name: EXPORT, gpio: 14},
-    {name: EXPORT, gpio: 165},
-    {name: EXPORT, gpio: 212},
-    {name: EXPORT, gpio: 213},
-    {name: EXPORT, gpio: 214},
-    {name: DIRECTION, gpio: 214, direction: 'low'},
-    {name: DIRECTION, gpio: 204, direction: 'low'},
-    {name: DIRECTION, gpio: 205, direction: 'low'},
-    {name: DIRECTION, gpio: 14, direction: 'in'},
-    {name: DIRECTION, gpio: 165, direction: 'in'},
-    {name: DIRECTION, gpio: 236, direction: 'low'},
-    {name: DIRECTION, gpio: 237, direction: 'low'},
-    {name: DIRECTION, gpio: 212, direction: 'in'},
-    {name: DIRECTION, gpio: 213, direction: 'in'},
-    {name: PINMUX, gpio: 28, pinmux: 'mode1'},
-    {name: PINMUX, gpio: 27, pinmux: 'mode1'},
-    {name: DIRECTION, gpio: 214, direction: 'high'},
+    {func: exportGpio, gpio: 28},
+    {func: exportGpio, gpio: 27},
+    {func: exportGpio, gpio: 204},
+    {func: exportGpio, gpio: 205},
+    {func: exportGpio, gpio: 236},
+    {func: exportGpio, gpio: 237},
+    {func: exportGpio, gpio: 14},
+    {func: exportGpio, gpio: 165},
+    {func: exportGpio, gpio: 212},
+    {func: exportGpio, gpio: 213},
+    {func: exportGpio, gpio: 214},
+    {func: direction, gpio: 214, direction: 'low'},
+    {func: direction, gpio: 204, direction: 'low'},
+    {func: direction, gpio: 205, direction: 'low'},
+    {func: direction, gpio: 14, direction: 'in'},
+    {func: direction, gpio: 165, direction: 'in'},
+    {func: direction, gpio: 236, direction: 'low'},
+    {func: direction, gpio: 237, direction: 'low'},
+    {func: direction, gpio: 212, direction: 'in'},
+    {func: direction, gpio: 213, direction: 'in'},
+    {func: currentPinmux, gpio: 28, pinmux: 'mode1'},
+    {func: currentPinmux, gpio: 27, pinmux: 'mode1'},
+    {func: direction, gpio: 214, direction: 'high'}
   ];
 
   performTasks(tasks, cb);
