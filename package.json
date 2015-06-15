@@ -1,6 +1,6 @@
 {
   "name": "edison-i2c-config",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Configure I2C bus 6 on the Intel Edison Arduino base board",
   "main": "edison-i2c-config.js",
   "directories": {
