@@ -1,3 +1,8 @@
+Unpublished
+===========
+
+  * improved async calling conventions
+
 0.1.1 / Jun 14 2015
 ===================
 

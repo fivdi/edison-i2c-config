@@ -1,8 +1,7 @@
 # edison-i2c-config 
 
-A JavaScript package for configuring I2C bus 6 on the Intel Edison Arduino base board.
-
-After I2C bus 6 has been configured, it can be accessed with the
+A JavaScript package for configuring I2C bus 6 on the Intel Edison Arduino
+base board. After I2C bus 6 has been configured, it can be accessed with the
 [i2c-bus](https://github.com/fivdi/i2c-bus) package.
 
 ## Installation
